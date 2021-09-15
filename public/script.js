@@ -2,6 +2,7 @@ const socket = io('/')
 const videoGrid = document.getElementById('video-grid')
 const myPeer = new Peer(undefined, {
     host: 'https://lms-peer-server.herokuapp.com',
+    path: "/"
 })
 let myVideoStream;
 const myVideo = document.createElement('video')

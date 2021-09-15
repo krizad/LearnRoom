@@ -1,2 +1,2 @@
 web: node server.js
-web: peerjs --port process.env.PORT
+web: peerjs --port 3001

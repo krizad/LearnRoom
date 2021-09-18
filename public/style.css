@@ -301,7 +301,7 @@ a {
     border-radius: 0 12px 12px 12px;
     font-size: 12px;
     line-height: 16px;
-    max-width: calc(100%);
+    max-width: 100%;
     color: var(--message-text);
 }
 

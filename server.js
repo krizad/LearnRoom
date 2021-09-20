@@ -8,9 +8,12 @@ app.set('view engine', 'ejs')
 app.use(express.static('public'))
 
 var cors = require('cors')
+
 app.use(cors());
 
 app.options('*', cors())
+
+const userList = {}
 
 app.get('/', (req, res) => {
     res.redirect(`/${uuidV4()}`)
@@ -23,12 +26,12 @@ app.get('/:room', (req, res) => {
 io.on('connection', socket => {
     socket.on('join-room', (roomId, userId, userName) => {
         socket.join(roomId)
-        console.log(userName)
-        socket.broadcast.emit('user-connected', userId);
+        userList[userId] = userName;
+        socket.broadcast.emit('user-connected', userId, userName);
         // socket.to(roomId).broadcast.emit('user-connected', userId);
 
         socket.on('disconnect', () => {
-                socket.broadcast.emit('user-disconnected', userId)
+                socket.broadcast.emit('user-disconnected', userId, userName)
                     // socket.to(roomId).broadcast.emit('user-disconnected', userId)
             })
             // messages

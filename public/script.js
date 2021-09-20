@@ -1,11 +1,11 @@
 const socket = io()
 const videoGrid = document.getElementById('video-grid')
 
-// const myPeer = new Peer(undefined, {
-//         host: 'lms-peer-server.herokuapp.com',
-//         port: '443'
-//     })
-const myPeer = new Peer(undefined, {})
+const myPeer = new Peer(undefined, {
+        host: 'lms-peer-server.herokuapp.com',
+        port: '443'
+    })
+    // const myPeer = new Peer(undefined, {})
 let myVideoStream;
 const myVideo = document.createElement('video')
 myVideo.muted = true;
@@ -24,7 +24,8 @@ navigator.mediaDevices.getUserMedia({
         })
     })
 
-    socket.on('user-connected', userId => {
+    socket.on('user-connected', (userId, userName) => {
+        console.log(userName + 'Connect to this room')
         connectToNewUser(userId, stream)
     })
 

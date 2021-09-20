@@ -25,7 +25,11 @@ navigator.mediaDevices.getUserMedia({
     })
 
     socket.on('user-connected', userId => {
-            connectToNewUser(userId, stream)
+        connectToNewUser(userId, stream)
+    })
+
+    socket.on('user-disconnected', userId => {
+            if (peers[userId]) peers[userId].close()
         })
         // input value
     let text = $("input");
@@ -54,9 +58,7 @@ navigator.mediaDevices.getUserMedia({
     })
 })
 
-socket.on('user-disconnected', userId => {
-    if (peers[userId]) peers[userId].close()
-})
+
 
 myPeer.on('open', id => {
     socket.emit('join-room', ROOM_ID, id)

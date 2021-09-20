@@ -1,4 +1,4 @@
-const socket = io()
+const socket = io('/')
 const videoGrid = document.getElementById('video-grid')
 
 const myPeer = new Peer(undefined, {
@@ -46,12 +46,12 @@ navigator.mediaDevices.getUserMedia({
             text.val('')
         }
     });
-    socket.on("createMessage", (message) => {
+    socket.on("createMessage", (message, userName) => {
         // $("ul").append(`<li class="message"><b>user</b><br/>${message}</li>`);
 
         $(".chat-area").append(`<div class="message-wrapper">
         <div class="message-content">
-            <p class="name">Ryan Patrick</p>
+            <p class="name">${userName}</p>
             <div class="message">${message}</div>
         </div>
     </div>`);

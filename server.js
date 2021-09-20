@@ -24,19 +24,19 @@ io.on('connection', socket => {
     socket.on('join-room', (roomId, userId) => {
         socket.join(roomId)
         socket.broadcast.emit('user-connected', userId);
-
         // socket.to(roomId).broadcast.emit('user-connected', userId);
-        // messages
+
+        socket.on('disconnect', () => {
+                socket.broadcast.emit('user-disconnected', userId)
+                    // socket.to(roomId).broadcast.emit('user-disconnected', userId)
+            })
+            // messages
         socket.on('message', (message) => {
             //send message to the same room
             io.to(roomId).emit('createMessage', message)
         });
 
-        socket.on('disconnect', () => {
-            socket.broadcast.emit('user-disconnected', userId)
 
-            // socket.to(roomId).broadcast.emit('user-disconnected', userId)
-        })
     })
 })
 

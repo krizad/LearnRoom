@@ -1,11 +1,11 @@
 const socket = io()
 const videoGrid = document.getElementById('video-grid')
 
-const myPeer = new Peer(undefined, {
-        host: 'lms-peer-server.herokuapp.com',
-        port: '443'
-    })
-    // const myPeer = new Peer(undefined, {})
+// const myPeer = new Peer(undefined, {
+//         host: 'lms-peer-server.herokuapp.com',
+//         port: '443'
+//     })
+const myPeer = new Peer(undefined, {})
 let myVideoStream;
 const myVideo = document.createElement('video')
 myVideo.muted = true;
@@ -29,7 +29,9 @@ navigator.mediaDevices.getUserMedia({
     })
 
     socket.on('user-disconnected', userId => {
-            if (peers[userId]) peers[userId].close()
+            if (peers[userId]) {
+                peers[userId].close()
+            }
         })
         // input value
     let text = $("input");

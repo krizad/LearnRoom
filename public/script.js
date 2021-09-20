@@ -25,7 +25,7 @@ navigator.mediaDevices.getUserMedia({
     })
 
     socket.on('user-connected', (userId, userName) => {
-        console.log(userName + 'Connect to this room')
+        console.log(userName + ' Connect to this room')
         connectToNewUser(userId, stream)
     })
 
@@ -46,13 +46,10 @@ navigator.mediaDevices.getUserMedia({
             text.val('')
         }
     });
-    socket.on("createMessage", message => {
+    socket.on("createMessage", (message) => {
         // $("ul").append(`<li class="message"><b>user</b><br/>${message}</li>`);
 
         $(".chat-area").append(`<div class="message-wrapper">
-        <div class="profile-picture">
-            <img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80" alt="pp">
-        </div>
         <div class="message-content">
             <p class="name">Ryan Patrick</p>
             <div class="message">${message}</div>
@@ -90,7 +87,6 @@ function addVideoStream(video, stream) {
     })
     videoGrid.append(video)
 }
-
 
 
 const scrollToBottom = () => {

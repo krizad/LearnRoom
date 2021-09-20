@@ -1,10 +1,9 @@
 const express = require('express')
 const app = express()
 const server = require('http').Server(app)
-    // const io = require('socket.io')(server)
-const { Server } = require("socket.io");
-const io = new Server(server);
+const io = require('socket.io')(server)
 const { ExpressPeerServer } = require('peer');
+
 const peerServer = ExpressPeerServer(server, {
     debug: true
 });

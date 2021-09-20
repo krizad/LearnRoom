@@ -2,7 +2,7 @@ const socket = io('/')
 const videoGrid = document.getElementById('video-grid')
 
 const myPeer = new Peer(undefined, {
-        host: 'lms-peer-server.herokuapp.com',
+        host: 'lms-peer-server.herokuapp.com/',
         port: '443'
     })
     // const myPeer = new Peer(undefined, {})

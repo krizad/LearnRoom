@@ -42,8 +42,11 @@ navigator.mediaDevices.getUserMedia({
     $('html').keydown(function(e) {
         if (e.which == 13 && text.val().length !== 0) {
             socket.emit('message', text.val());
-            $(".chat-area").append(`<div class="message-wrapper reverse"><p class="name">` +
-                name + `</p><div class="message">${text.val()}</div></div></div>`);
+            $(".chat-area").append(`<div class="message-wrapper reverse">
+            <div class="message-content">
+                <p class="name">` + name + `</p>
+                <div class="message">${text.val()}</div>
+                </div></div>`);
             scrollToBottom()
             text.val('')
         }

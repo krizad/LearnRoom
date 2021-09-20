@@ -41,7 +41,7 @@ navigator.mediaDevices.getUserMedia({
     $('html').keydown(function(e) {
         if (e.which == 13 && text.val().length !== 0) {
             socket.emit('message', text.val());
-            // $(".chat-area").append(`<div class="message-wrapper"><div class="profile-picture"><img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80" alt="pp"></div><div class="message-content"><p class="name">Ryan Patrick</p><div class="message">${text.val()}</div></div></div>`);
+            $(".chat-area").append(`<div class="message-wrapper"><div class="profile-picture"><img src="https://images.unsplash.com/photo-1581824283135-0666cf353f35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1276&q=80" alt="pp"></div><div class="message-content"><p class="name">Ryan Patrick</p><div class="message">${text.val()}</div></div></div>`);
             scrollToBottom()
             text.val('')
         }

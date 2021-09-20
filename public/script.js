@@ -64,7 +64,8 @@ navigator.mediaDevices.getUserMedia({
 
 
 myPeer.on('open', id => {
-    socket.emit('join-room', ROOM_ID, id)
+    var name = prompt("What's your name?")
+    socket.emit('join-room', ROOM_ID, id, name)
 })
 
 function connectToNewUser(userId, stream) {
@@ -78,6 +79,7 @@ function connectToNewUser(userId, stream) {
     })
 
     peers[userId] = call
+
 }
 
 function addVideoStream(video, stream) {

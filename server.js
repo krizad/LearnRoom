@@ -28,11 +28,11 @@ io.on('connection', socket => {
     socket.on('join-room', (roomId, userId, userName) => {
         socket.join(roomId)
         userList[socket.id] = userName;
-        socket.broadcast.emit('user-connected', userId, userName);
+        socket.broadcast.to(roomId).emit('user-connected', userId, userName);
         // socket.to(roomId).broadcast.emit('user-connected', userId);
 
         socket.on('disconnect', () => {
-                socket.broadcast.emit('user-disconnected', userId, userName)
+                socket.broadcast.to(roomId).emit('user-disconnected', userId, userName)
                     // socket.to(roomId).broadcast.emit('user-disconnected', userId)
             })
             // messages

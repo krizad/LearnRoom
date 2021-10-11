@@ -41,14 +41,7 @@ navigator.mediaDevices.getUserMedia({
     // when press enter send message
     $('html').keydown(function(e) {
         if (e.which == 13 && text.val().length !== 0) {
-            socket.emit('message', text.val());
-            $(".chat-area").append(`<div class="message-wrapper reverse">
-            <div class="message-content">
-                <p class="name">` + name + `</p>
-                <div class="message">${text.val()}</div>
-                </div></div>`);
-            scrollToBottom()
-            text.val('')
+            sendMessage()
         }
     });
     socket.on("createMessage", (message, userName) => {
@@ -91,6 +84,17 @@ function addVideoStream(video, stream) {
         video.play()
     })
     videoGrid.append(video)
+}
+
+function sendMessage() {
+    socket.emit('message', text.val());
+    $(".chat-area").append(`<div class="message-wrapper reverse">
+    <div class="message-content">
+        <p class="name">` + name + `</p>
+        <div class="message">${text.val()}</div>
+        </div></div>`);
+    scrollToBottom()
+    text.val('')
 }
 
 

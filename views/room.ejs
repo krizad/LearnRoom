@@ -92,16 +92,16 @@
 
             </div>
             <div class="video-call-actions">
-                <div onclick="muteUnmute()" class="video-action-button main__controls__button main__mute_button">
+                <div id="muteButt" onclick="muteUnmute()" class="video-action-button main__controls__button main__mute_button">
                     <i class="fas fa-microphone"></i>
                     <!-- <span>Mute</span> -->
                 </div>
-                <div onclick="playStop()" class="video-action-button main__controls__button main__video_button">
+                <div id="playButt" onclick="playStop()" class="video-action-button main__controls__button main__video_button">
                     <i class="fas fa-video"></i>
                     <!-- <span>Stop Video</span> -->
                 </div>
-                <button class="video-action-button maximize"></button>
-                <button class="video-action-button endcall">Leave</button>
+                <button id="fullscreenButt" class="video-action-button maximize"></button>
+                <button href="javascript:window.open('','_self').close();" id="leaveButt" class="video-action-button endcall">Leave</button>
             </div>
         </div>
         <div class="right-side">
@@ -126,7 +126,7 @@
                 <div class="chat-typing-area-wrapper">
                     <div class="chat-typing-area">
                         <input id="chat_message" type="text" placeholder="Type your meesage..." class="chat-input">
-                        <button class="send-button" onclick="sendMessage(this.value)">
+                        <button class="send-button" id="sendButton">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" class="feather feather-send"
                                 viewBox="0 0 24 24">

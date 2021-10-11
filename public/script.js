@@ -17,6 +17,8 @@ navigator.mediaDevices.getUserMedia({
 }).then(stream => {
     myVideoStream = stream;
     addVideoStream(myVideo, stream)
+    $("#muteButt").click()
+    $("#playButt").click()
     myPeer.on('call', call => {
         call.answer(stream)
         const video = document.createElement('video')
@@ -28,6 +30,7 @@ navigator.mediaDevices.getUserMedia({
     socket.on('user-connected', (userId, userName) => {
         console.log(userName + ' Connect to this room')
         connectToNewUser(userId, stream)
+
     })
 
     socket.on('user-disconnected', userId => {
@@ -44,6 +47,11 @@ navigator.mediaDevices.getUserMedia({
             sendMessage(text)
         }
     });
+
+    $('#sendButton').on('click', function() {
+        sendMessage(text)
+    });
+
     socket.on("createMessage", (message, userName) => {
         // $("ul").append(`<li class="message"><b>user</b><br/>${message}</li>`);
 
@@ -55,6 +63,14 @@ navigator.mediaDevices.getUserMedia({
     </div>`);
         scrollToBottom()
     })
+
+    $("#fullscreenButt").on("click", function() {
+
+        })
+        // $("#leaveButt").on("click", function() {
+        //     console.log("leave")
+        //     window.close()
+        // })
 })
 
 
@@ -63,6 +79,8 @@ myPeer.on('open', id => {
     name = prompt("What's your name?")
     socket.emit('join-room', ROOM_ID, id, name)
 })
+
+
 
 function connectToNewUser(userId, stream) {
     const call = myPeer.call(userId, stream)

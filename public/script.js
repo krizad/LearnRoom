@@ -41,7 +41,7 @@ navigator.mediaDevices.getUserMedia({
     // when press enter send message
     $('html').keydown(function(e) {
         if (e.which == 13 && text.val().length !== 0) {
-            sendMessage()
+            sendMessage(text)
         }
     });
     socket.on("createMessage", (message, userName) => {
@@ -86,7 +86,7 @@ function addVideoStream(video, stream) {
     videoGrid.append(video)
 }
 
-function sendMessage() {
+function sendMessage(text) {
     socket.emit('message', text.val());
     $(".chat-area").append(`<div class="message-wrapper reverse">
     <div class="message-content">

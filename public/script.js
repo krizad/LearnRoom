@@ -27,6 +27,11 @@ navigator.mediaDevices.getUserMedia({
         })
     })
 
+    myPeer.on('open', id => {
+        name = prompt("What's your name?")
+        socket.emit('join-room', ROOM_ID, id, name)
+    })
+
     socket.on('user-connected', (userId, userName) => {
         console.log(userName + ' Connect to this room')
         connectToNewUser(userId, stream)
@@ -65,20 +70,20 @@ navigator.mediaDevices.getUserMedia({
     })
 
     $("#fullscreenButt").on("click", function() {
+        toggleFullScreen()
+    })
 
-        })
-        // $("#leaveButt").on("click", function() {
-        //     console.log("leave")
-        //     window.close()
-        // })
+    $("#leaveButt").on("click", function() {
+        window.open('', '_self', '');
+        window.close();
+
+    })
+
 })
 
 
 
-myPeer.on('open', id => {
-    name = prompt("What's your name?")
-    socket.emit('join-room', ROOM_ID, id, name)
-})
+
 
 
 
@@ -113,6 +118,20 @@ function sendMessage(text) {
         </div></div>`);
     scrollToBottom()
     text.val('')
+}
+
+function toggleFullScreen() {
+    var doc = window.document;
+    var docEl = doc.documentElement;
+
+    var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+    if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+        requestFullScreen.call(docEl);
+    } else {
+        cancelFullScreen.call(doc);
+    }
 }
 
 

@@ -11,6 +11,7 @@ const myVideo = document.createElement('video')
 myVideo.muted = true;
 const peers = {}
 var name;
+
 navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true
@@ -35,16 +36,17 @@ navigator.mediaDevices.getUserMedia({
     socket.on('user-connected', (userId, userName) => {
         console.log(userName + ' Connect to this room')
         connectToNewUser(userId, stream)
-
+        currUserId = userId;
     })
 
     socket.on('user-disconnected', userId => {
-            if (peers[userId]) {
-                peers[userId].close()
-            }
-            console.log(userId)
-        })
-        // input value
+        if (peers[userId]) {
+            peers[userId].close()
+        }
+        console.log(userId)
+    })
+
+    // input value
     let text = $("input");
     // when press enter send message
     $('html').keydown(function(e) {
@@ -81,12 +83,6 @@ navigator.mediaDevices.getUserMedia({
 
 })
 
-
-
-
-
-
-
 function connectToNewUser(userId, stream) {
     const call = myPeer.call(userId, stream)
     const video = document.createElement('video')
@@ -98,6 +94,9 @@ function connectToNewUser(userId, stream) {
     })
 
     peers[userId] = call
+
+    currPeer = call;
+
 
 }
 

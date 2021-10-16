@@ -32,14 +32,15 @@ io.on('connection', socket => {
         // socket.to(roomId).broadcast.emit('user-connected', userId);
 
         socket.on('disconnect', () => {
-                socket.broadcast.to(roomId).emit('user-disconnected', userId, userName)
-                    // socket.to(roomId).broadcast.emit('user-disconnected', userId)
-            })
-            // messages
+            socket.broadcast.to(roomId).emit('user-disconnected', userId, userName)
+                // socket.to(roomId).broadcast.emit('user-disconnected', userId)
+        })
+
+
+        // messages
         socket.on('message', message => {
             //send message to the same room
             socket.to(roomId).emit('createMessage', message, userList[socket.id])
-
         });
 
 

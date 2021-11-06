@@ -26,14 +26,21 @@ app.get('/:room', (req, res) => {
 
 io.on('connection', socket => {
     socket.on('join-room', (roomId, userId, userName) => {
+        console.log(`User ${userName} with id ${userId} has joined room ${roomId}`)
         socket.join(roomId)
         userList[socket.id] = userName;
         socket.broadcast.to(roomId).emit('user-connected', userId, userName);
-        // socket.to(roomId).broadcast.emit('user-connected', userId);
+
+        socket.on('share-screen', (roomId, userId, userName) => {
+            console.log(`User ${userName} with id ${userId} has joined room ${roomId}`)
+            socket.broadcast.to(roomId).emit('user-connected', userId, userName);
+
+            // socket.broadcast.to(roomId).emit('share-connected', userId, userName);
+        })
 
         socket.on('disconnect', () => {
+            console.log(`User ${userName} with id ${userId} has left room ${roomId}`)
             socket.broadcast.to(roomId).emit('user-disconnected', userId, userName)
-                // socket.to(roomId).broadcast.emit('user-disconnected', userId)
         })
 
 

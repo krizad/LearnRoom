@@ -12,6 +12,12 @@ myVideo.muted = true;
 const peers = {}
 var name;
 
+var screenStream;
+var screenSharing = false
+var userId;
+var currentPeer = null;
+var id;
+
 navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true
@@ -25,10 +31,13 @@ navigator.mediaDevices.getUserMedia({
         const video = document.createElement('video')
         call.on('stream', userVideoStream => {
             addVideoStream(video, userVideoStream)
+
         })
+
     })
 
     myPeer.on('open', id => {
+        id = id;
         name = prompt("What's your name?")
         socket.emit('join-room', ROOM_ID, id, name)
     })
@@ -36,7 +45,6 @@ navigator.mediaDevices.getUserMedia({
     socket.on('user-connected', (userId, userName) => {
         console.log(userName + ' Connect to this room')
         connectToNewUser(userId, stream)
-        currUserId = userId;
     })
 
     socket.on('user-disconnected', userId => {
@@ -83,6 +91,8 @@ navigator.mediaDevices.getUserMedia({
 
 })
 
+
+
 function connectToNewUser(userId, stream) {
     const call = myPeer.call(userId, stream)
     const video = document.createElement('video')
@@ -92,20 +102,22 @@ function connectToNewUser(userId, stream) {
     call.on('close', () => {
         video.remove()
     })
-
+    userId = userId;
     peers[userId] = call
-
-    currPeer = call;
+    currentPeer = call;
+    console.log(currentPeer)
 
 
 }
 
 function addVideoStream(video, stream) {
+
     video.srcObject = stream
     video.addEventListener('loadedmetadata', () => {
         video.play()
     })
     videoGrid.append(video)
+
 }
 
 function sendMessage(text) {
@@ -193,4 +205,84 @@ const setPlayVideo = () => {
     <span></span>
   `
     document.querySelector('.main__video_button').innerHTML = html;
+}
+
+function startScreenShare() {
+
+    if (screenSharing) {
+        stopScreenSharing()
+    }
+    const shareVideo = document.createElement('video')
+    shareVideo.muted = true;
+
+    navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true
+    }).then(stream => {
+        screenStream = stream;
+        addVideoStream(shareVideo, stream)
+
+        socket.emit('share-screen', ROOM_ID, id, "name")
+
+        myPeer.on('call', call => {
+            call.answer(stream)
+            const videosteam = document.createElement('video')
+            call.on('stream', userVideoStream => {
+                addVideoStream(videosteam, userVideoStream)
+
+            })
+
+        })
+        socket.on('user-connected', (userId, userName) => {
+            console.log(userName + ' Connect to this room')
+            const call = myPeer.call(userId, stream)
+            const video = document.createElement('video')
+            call.on('stream', userVideoStream => {
+                addVideoStream(video, userVideoStream)
+            })
+            call.on('close', () => {
+                video.remove()
+            })
+            peers[userId] = call
+
+        })
+
+
+    })
+
+    // navigator.mediaDevices.getDisplayMedia({ video: true }).then((stream) => {
+    //     screenStream = stream;
+    //     let videoTrack = screenStream.getVideoTracks()[0];
+    //     videoTrack.onended = () => {
+    //         stopScreenSharing()
+    //     }
+
+    //     const video = document.createElement('video')
+    //     socket.emit('join-room', ROOM_ID, "idshare", 'nameshare')
+    //     addVideoStream(video, screenStream)
+    //     screenSharing = true
+    //         // if (myPeer) {
+    //         //     let sender = currentPeer.peerConnection.getSenders().find(function(s) {
+    //         //         return s.track.kind == videoTrack.kind;
+    //         //     })
+    //         //     sender.replaceTrack(videoTrack)
+    //         //     screenSharing = true
+    //         // }
+    // })
+}
+
+function stopScreenSharing() {
+    if (!screenSharing) return;
+    let videoTrack = myVideoStream.getVideoTracks()[0];
+
+    if (myPeer) {
+        let sender = currentPeer.peerConnection.getSenders().find(function(s) {
+            return s.track.kind == videoTrack.kind;
+        })
+        sender.replaceTrack(videoTrack)
+    }
+    screenStream.getTracks().forEach(function(track) {
+        track.stop();
+    });
+    screenSharing = false
 }

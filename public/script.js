@@ -84,7 +84,6 @@ navigator.mediaDevices.getUserMedia({
     })
 
     $("#leaveButt").on("click", function() {
-        window.open('', '_self', '');
         window.close();
 
     })
@@ -117,7 +116,7 @@ function addVideoStream(video, stream) {
         video.play()
     })
     videoGrid.append(video)
-    $("#video-grid").sortable();
+        // $("#video-grid").sortable();
 
 }
 

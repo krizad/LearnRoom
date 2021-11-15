@@ -90,6 +90,7 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
+    overflow: hidden;
 }
 
 video {
@@ -97,6 +98,7 @@ video {
     width: 400px;
     object-fit: cover;
     padding: 8px;
+    border-radius: 5px;
 }
 
 * {

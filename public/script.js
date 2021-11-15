@@ -10,13 +10,16 @@ let myVideoStream;
 const myVideo = document.createElement('video')
 myVideo.muted = true;
 const peers = {}
-var name;
+var inputName;
 
 var screenStream;
 var screenSharing = false
 var userId;
 var currentPeer = null;
 var id;
+
+inputName = "Anonymous"
+inputName = prompt("What's your name?")
 
 navigator.mediaDevices.getUserMedia({
     video: true,
@@ -26,6 +29,13 @@ navigator.mediaDevices.getUserMedia({
     addVideoStream(myVideo, stream)
     $("#muteButt").click()
     $("#playButt").click()
+
+    myPeer.on('open', id => {
+        id = id;
+
+        socket.emit('join-room', ROOM_ID, id, inputName)
+    })
+
     myPeer.on('call', call => {
         call.answer(stream)
         const video = document.createElement('video')
@@ -36,11 +46,7 @@ navigator.mediaDevices.getUserMedia({
 
     })
 
-    myPeer.on('open', id => {
-        id = id;
-        name = prompt("What's your name?")
-        socket.emit('join-room', ROOM_ID, id, name)
-    })
+
 
     socket.on('user-connected', (userId, userName) => {
         console.log(userName + ' Connect to this room')
@@ -51,48 +57,152 @@ navigator.mediaDevices.getUserMedia({
         if (peers[userId]) {
             peers[userId].close()
         }
-        console.log(userId)
+
+        delete peers[userId];
+        //console.log(userId)
     })
 
-    // input value
-    let text = $("input");
-    // when press enter send message
-    $('html').keydown(function(e) {
-        if (e.which == 13 && text.val().length !== 0) {
-            sendMessage(text)
-        }
-    });
 
-    $('#sendButton').on('click', function() {
+
+}).catch(err => {
+    //err No Cam
+    navigator.mediaDevices.getUserMedia({
+        audio: true
+    }).then(stream => {
+        myVideoStream = stream;
+        addVideoStream(myVideo, stream)
+        $("#muteButt").click()
+        $("#playButt").click()
+
+
+        myPeer.on('open', id => {
+            id = id;
+
+            socket.emit('join-room', ROOM_ID, id, inputName)
+        })
+
+        myPeer.on('call', call => {
+            call.answer(stream)
+            const video = document.createElement('video')
+            call.on('stream', userVideoStream => {
+                addVideoStream(video, userVideoStream)
+
+            })
+
+        })
+
+
+
+        socket.on('user-connected', (userId, userName) => {
+            console.log(userName + ' Connect to this room')
+            connectToNewUser(userId, stream)
+        })
+
+        socket.on('user-disconnected', userId => {
+            if (peers[userId]) {
+                peers[userId].close()
+            }
+
+            delete peers[userId];
+            //console.log(userId)
+        })
+
+
+
+    }).catch(err => {
+        //err No Mic
+        navigator.mediaDevices.getUserMedia({
+            video: true
+        }).then(stream => {
+            myVideoStream = stream;
+            addVideoStream(myVideo, stream)
+            $("#muteButt").click()
+            $("#playButt").click()
+
+
+            myPeer.on('open', id => {
+                id = id;
+
+                socket.emit('join-room', ROOM_ID, id, inputName)
+            })
+
+            myPeer.on('call', call => {
+                call.answer(stream)
+                const video = document.createElement('video')
+                call.on('stream', userVideoStream => {
+                    addVideoStream(video, userVideoStream)
+
+                })
+
+            })
+
+
+
+            socket.on('user-connected', (userId, userName) => {
+                console.log(userName + ' Connect to this room')
+                connectToNewUser(userId, stream)
+            })
+
+            socket.on('user-disconnected', userId => {
+                if (peers[userId]) {
+                    peers[userId].close()
+                }
+
+                delete peers[userId];
+                //console.log(userId)
+            })
+
+
+
+        }).catch(err => {
+            //err No Cam&&Mic
+            $("#muteButt").click()
+            $("#playButt").click()
+
+            alert("We need at least Camera or Microphone")
+
+        })
+    })
+})
+
+// input value
+let text = $("input");
+// when press enter send message
+$('html').keydown(function(e) {
+    if (e.which == 13 && text.val().length !== 0) {
         sendMessage(text)
-    });
+    }
+});
 
-    socket.on("createMessage", (message, userName) => {
-        // $("ul").append(`<li class="message"><b>user</b><br/>${message}</li>`);
+$('#sendButton').on('click', function() {
+    sendMessage(text)
+});
 
-        $(".chat-area").append(`<div class="message-wrapper">
-        <div class="message-content">
-            <p class="name">${userName}</p>
-            <div class="message">${message}</div>
-        </div>
-    </div>`);
-        scrollToBottom()
-    })
+socket.on("createMessage", (message, userName) => {
+    // $("ul").append(`<li class="message"><b>user</b><br/>${message}</li>`);
 
-    $("#fullscreenButt").on("click", function() {
-        toggleFullScreen()
-    })
+    $(".chat-area").append(`<div class="message-wrapper">
+    <div class="message-content">
+        <p class="name">${userName}</p>
+        <div class="message">${message}</div>
+    </div>
+</div>`);
+    scrollToBottom()
+})
 
-    $("#leaveButt").on("click", function() {
-        window.close();
+$("#fullscreenButt").on("click", function() {
+    toggleFullScreen()
+})
 
-    })
+$("#leaveButt").on("click", function() {
+    window.close();
 
 })
 
 
 
 function connectToNewUser(userId, stream) {
+
     const call = myPeer.call(userId, stream)
     const video = document.createElement('video')
     call.on('stream', userVideoStream => {
@@ -103,8 +213,6 @@ function connectToNewUser(userId, stream) {
     })
     userId = userId;
     peers[userId] = call
-    currentPeer = call;
-    console.log(currentPeer)
 
 
 }
@@ -124,7 +232,7 @@ function sendMessage(text) {
     socket.emit('message', text.val());
     $(".chat-area").append(`<div class="message-wrapper reverse">
     <div class="message-content">
-        <p class="name">` + name + `</p>
+        <p class="name">` + inputName + `</p>
         <div class="message">${text.val()}</div>
         </div></div>`);
     scrollToBottom()
@@ -153,26 +261,48 @@ const scrollToBottom = () => {
 
 
 const muteUnmute = () => {
-    const enabled = myVideoStream.getAudioTracks()[0].enabled;
-    if (enabled) {
-        myVideoStream.getAudioTracks()[0].enabled = false;
+
+    if (!myVideoStream) {
+        setUnmuteButton();
+        return
+    }
+
+    if (!myVideoStream.getAudioTracks()[0]) {
         setUnmuteButton();
     } else {
-        setMuteButton();
-        myVideoStream.getAudioTracks()[0].enabled = true;
+        const enabled = myVideoStream.getAudioTracks()[0].enabled;
+        if (enabled) {
+            myVideoStream.getAudioTracks()[0].enabled = false;
+            setUnmuteButton();
+        } else {
+            setMuteButton();
+            myVideoStream.getAudioTracks()[0].enabled = true;
+        }
     }
+
+
 }
 
 const playStop = () => {
-    // console.log('object')
-    let enabled = myVideoStream.getVideoTracks()[0].enabled;
-    if (enabled) {
-        myVideoStream.getVideoTracks()[0].enabled = false;
+    if (!myVideoStream) {
+        setPlayVideo()
+        return
+    }
+    if (!myVideoStream.getVideoTracks()[0]) {
         setPlayVideo()
     } else {
-        setStopVideo()
-        myVideoStream.getVideoTracks()[0].enabled = true;
+
+        let enabled = myVideoStream.getVideoTracks()[0].enabled;
+        if (enabled) {
+            myVideoStream.getVideoTracks()[0].enabled = false;
+            setPlayVideo()
+        } else {
+            setStopVideo()
+            myVideoStream.getVideoTracks()[0].enabled = true;
+        }
     }
+
+
 }
 
 const setMuteButton = () => {
